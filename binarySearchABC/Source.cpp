@@ -1,73 +1,97 @@
 #include <iostream>
-#include<stdlib.h>
 
 using namespace std;
 
-class binTree
+template <class T>
+class BinaryTree
 {
-	int data;
-	binTree *left, * right;
+
+	struct node								//struct build for tree
+	{
+		T value;
+		struct node* right;
+		struct node* left;
+	};
 
 public:
-	binTree();											//Constructor
-	binTree(int);										//Parametirize Const
+	BinaryTree();
+	void insert(T value);						//adding values
+	void printInOrder();					//inorder traversal
+private:
+	struct node* root;
 
-	binTree* insert(binTree*, int);						//Insert Function
+	void insert(struct node** node, T value);
+	void printInOrder(struct node* node);
 
-	void inorder(binTree*);
 };
 
-binTree::binTree() :data(0), left(NULL), right(NULL)	//Default Const.
+template <class T>
+BinaryTree<T>::BinaryTree() 
 {
-
-}
-binTree::binTree(int value)								//Parametirize Const
-{
-	data = value;
-	left = right = NULL;
+	this->root = NULL;
 }
 
-binTree* binTree::insert(binTree* root, int value)
+template <class T>
+void BinaryTree<T>::insert(T value)
 {
-	if (!root)											//Inserrting 1st node, if NULL
-	{
-		return new binTree(value);
-	}
-
-	if (value > root->data)								//Insert data
-	{
-		root->right = insert(root->right, value);		//Insert Right
-	}
-	else
-	{
-		root->left = insert(root->left, value);			//Insert LEft
-	}
-		
-	return root;
+	insert(&(this->root), value);
 }
 
-void binTree::inorder(binTree* root)
+template <class T>
+void BinaryTree<T>::insert(struct node** node, T value)
 {
-	if (!root)
+	if (*node == NULL) 
 	{
-		return;
+		struct node* tmp = new struct node;
+		tmp->value = value;
+		tmp->left = NULL;
+		tmp->right = NULL;
+		*node = tmp;
 	}
-	inorder(root->left);
-	cout << root->data << endl;
-	inorder(root->right);
+	else 
+	{
+		if (value > (*node)->value)			
+		{
+			insert(&(*node)->right, value);				//adding right
+		}
+		else 
+		{
+			insert(&(*node)->left, value);				//adding left
+		}
+	}
 }
 
-int main()
+template <class T>
+void BinaryTree<T>::printInOrder() 
 {
-														//Creating Binary Tree
-	binTree b, * root = NULL;
-	root = b.insert(root, 50);
-	b.insert(root, 40);
-	b.insert(root, 30);
-	b.insert(root, 20);
-	b.insert(root, 10);
+	printInOrder(this->root);
+	cout << std::endl;
+}
 
-	b.inorder(root);
+template <class T>
+void BinaryTree<T>::printInOrder(struct node* node) 
+{
+	if (node != NULL) 
+	{
+		printInOrder(node->left);
+		cout << node->value << ", ";
+		printInOrder(node->right);
+	}
+}
+
+
+int main() 
+{
+
+	BinaryTree<char> charT;
+
+	charT.insert('A');
+	charT.insert('B');
+	charT.insert('C');
+	charT.insert('D');
+	charT.insert('E');
+
+	charT.printInOrder();
 
 	system("PAUSE");
 	return 0;
